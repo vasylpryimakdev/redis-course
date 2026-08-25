@@ -8,9 +8,9 @@
 	import Card from '$lib/components/card.svelte';
 	import Stat from '$lib/components/stat.svelte';
 
-	export let item: Item | null = null;
+	export let item: any = null;
 	export let userLikes: boolean = false;
-	export let history: { createdAt: number; amount: number }[] = [];
+	export let history: { createdAt: string; amount: number }[] = [];
 	export let similarItems: Item[] = [];
 	export let userHasHighBid = false;
 
@@ -20,6 +20,10 @@
 	let message = '';
 
 	$: err = amount && '';
+	$: endingAt =
+		typeof item.endingAt === 'object'
+			? item.endingAt.toRelative().replace('in ', '')
+			: DateTime.fromMillis(item.endingAt).toRelative().replace('in ', '');
 
 	async function onClickLike() {
 		if (!$session.userId) {
@@ -89,7 +93,7 @@
 					<Stat
 						bg="bg-violet-500"
 						label="Ending In"
-						value={DateTime.fromMillis(item.endingAt).toRelative().replace('in ', '')}
+						value={endingAt}
 					/>
 				</div>
 
