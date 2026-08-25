@@ -47,7 +47,8 @@
 	};
 
 	function timeLeft(t: number) {
-		const endingAt = DateTime.fromMillis(t);
+		let _t = typeof t === 'object' ? (t as any).toMillis() : t;
+		const endingAt = DateTime.fromMillis(_t);
 
 		if (endingAt < DateTime.now()) {
 			return '-';
@@ -68,13 +69,6 @@
 		{ label: '# Bids', field: 'bids', sortable: true },
 		{ label: '# Views', field: 'views', sortable: true },
 		{ label: '# Likes', field: 'likes', sortable: true },
-		{
-			label: 'Status',
-			component: ItemBadge,
-			props: (item: ItemSummary) => {
-				return { item };
-			}
-		},
 		{
 			label: 'Link',
 			component: Link,
@@ -108,7 +102,7 @@
 
 <div class="flex justify-between">
 	<div class="text-3xl mb-4">Your Items</div>
-	<div>
+	<!-- <div>
 		Filter By Status
 		<select
 			value={sort.tag}
@@ -121,7 +115,7 @@
 			<option value={'unsold'}>Show Unsold</option>
 			<option value={'sold'}>Show Sold</option>
 		</select>
-	</div>
+	</div> -->
 </div>
 
 {#if err}
