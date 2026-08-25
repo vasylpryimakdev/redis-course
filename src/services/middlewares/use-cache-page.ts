@@ -22,8 +22,8 @@ export const useCachePage: Handle = async ({ event, resolve }) => {
 	event.request.headers.set('if-none-match', Math.random().toString());
 	const res = await resolve(event);
 
-	const resForCache = res.clone();
-	const body = await streamToString(resForCache.body);
+	const resCache = res.clone();
+	const body = await streamToString(resCache.body);
 	await setCachedPage(event.url.pathname, body);
 
 	return res;
