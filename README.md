@@ -1,40 +1,87 @@
-# create-svelte
+# RedisMarket
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+RedisMarket is a SvelteKit auction application backed by Redis. It supports users,
+items, likes, bids, search, view counters and Redis-based item indexes.
 
-## Creating a project
+## Stack
 
-If you're seeing this, you've probably already done this step. Congrats!
+- SvelteKit with the Node adapter
+- TypeScript and Svelte
+- Redis 4 client
+- Tailwind CSS
+- Chart.js for bid history
+
+## Requirements
+
+- Node.js and npm
+- A Redis instance with RediSearch support
+
+Install dependencies:
 
 ```bash
-# create a new project in the current directory
-npm init svelte@next
-
-# create a new project in my-app
-npm init svelte@next my-app
+npm install
 ```
 
-> Note: the `@next` is temporary
+## Environment
 
-## Developing
+Create a local `.env` file. It is ignored by Git and must not be committed.
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+```env
+REDIS_HOST=your-redis-host
+REDIS_PORT=6379
+REDIS_PW=your-redis-password
+COOKIE_KEY=use-a-long-random-secret
+```
+
+The application connects to Redis when the SvelteKit server starts and creates
+the item search index if it does not exist. Redis credentials should be stored
+in the deployment platform's secret manager.
+
+## Local development
+
+Start the development server:
 
 ```bash
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
-## Building
+The application is available at `http://localhost:3000`.
 
-To create a production version of your app:
+Load the sample data into Redis when needed:
 
 ```bash
-npm run build
+npm run seed
 ```
 
-You can preview the production build with `npm run preview`.
+Warning: the seed script calls `FLUSHALL` and removes all data from the
+configured Redis database. Use a dedicated development database.
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+## Available scripts
+
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Start the SvelteKit development server |
+| `npm run build` | Build the application for Node |
+| `npm run preview` | Preview the production build |
+| `npm run check` | Run Svelte and TypeScript diagnostics |
+| `npm run lint` | Check formatting with Prettier |
+| `npm run format` | Format project files |
+| `npm run seed` | Replace Redis data with sample data |
+| `npm run worker` | Start the background worker, when implemented |
+
+## Project structure
+
+- `src/routes` contains pages and API endpoints.
+- `src/lib/components` contains reusable Svelte components.
+- `src/services/redis` contains the Redis client and index setup.
+- `src/services/queries` contains Redis queries and domain logic.
+- `seeds` contains sample data and the Redis seeding script.
+- `worker` is reserved for background jobs.
+
+## Current status
+
+The project is currently suitable for local development, but is not yet ready
+for production deployment. Before deploying, fix the failing type checks and
+the server-side `chart.js` import, add a production `start` command, and finish
+the background worker and remaining stubbed queries. Also configure a strong
+`COOKIE_KEY` and production cookie security options.
